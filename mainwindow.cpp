@@ -101,14 +101,6 @@ struct LoadedImage {
     ~LoadedImage() { if (blured) delete blured; }
 };
 
-bool WheelEater::eventFilter(QObject *obj, QEvent *event)
-{
-    if (event->type() == QEvent::Wheel)
-        return true;
-
-    return QObject::eventFilter(obj, event);
-}
-
 void MainWindow::repaintImage(const QImage& image) {
 
     QPixmap p = QPixmap::fromImage(image);
@@ -274,7 +266,10 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    move(QGuiApplication::screens().at(0)->geometry().center() - frameGeometry().center());
+
+    move(
+          QGuiApplication::screens().at(0)->geometry().center()
+          - frameGeometry().center());
 
     connect(ui->bt_selectFile, &QPushButton::released,
         [this] { selectFile(); });
@@ -286,7 +281,7 @@ MainWindow::MainWindow(QWidget *parent)
         [this](int) { updateImage(); });
 
     auto *g = ui->graphicsView;
-    g->viewport()->installEventFilter(new WheelEater);
+    g->viewport()->installEventFilter(this);
 
     scene = new QGraphicsScene;
     g->setScene(scene);
@@ -299,7 +294,16 @@ MainWindow::~MainWindow()
     if (img) delete img;
 }
 
-void MainWindow::wheelEvent(QWheelEvent* event) {
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::Wheel)
+        if (processWheelEvent(static_cast<QWheelEvent*>(event)))
+            return true;
+
+    return QObject::eventFilter(obj, event);
+}
+
+bool MainWindow::processWheelEvent(QWheelEvent* event) {
 
     auto* w = ui->graphicsView;
     auto* v = w->viewport();
@@ -309,7 +313,7 @@ void MainWindow::wheelEvent(QWheelEvent* event) {
     QPoint pt = w->mapFromGlobal(g.toPoint());
     // but only contains in the viewport
     if (!v->rect().contains(pt))
-        return;
+        return false;
 
     QPointF sc_before = w->mapToScene(pt);
 
@@ -327,6 +331,8 @@ void MainWindow::wheelEvent(QWheelEvent* event) {
 
     hs->setValue(hs->value() + pt_after.x() - pt.x());
     vs->setValue(vs->value() + pt_after.y() - pt.y());
+
+    return true;
 }
 
 

@@ -17,13 +17,6 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class WheelEater : public QObject
-{
-    Q_OBJECT
-protected:
-    bool eventFilter(QObject *obj, QEvent *event) override;
-};
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -36,7 +29,8 @@ public:
     void repaintBlurImage(BluredImage *preLev, uint maLev);
     void updateImage();
     void selectFile();
-    void wheelEvent(QWheelEvent* event) override;
+    bool eventFilter(QObject *obj, QEvent *event) override;
+    bool processWheelEvent(QWheelEvent* event);
 
     QGraphicsScene *scene = nullptr;
     LoadedImage *img = nullptr;
