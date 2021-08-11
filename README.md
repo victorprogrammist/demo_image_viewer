@@ -1,6 +1,6 @@
 # demo_image_viewer
 
-This code under licence CC BY-NC-ND.
+This code under GNU GPL licence.
 
 A simple demo image viewer program made on Qt.
 
