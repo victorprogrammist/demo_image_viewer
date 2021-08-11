@@ -35,9 +35,6 @@ public:
     QGraphicsScene *scene = nullptr;
     LoadedImage *img = nullptr;
 
-    QPointF lastError;
-    QPointF lastError2;
-
 private:
     Ui::MainWindow *ui;
 };
