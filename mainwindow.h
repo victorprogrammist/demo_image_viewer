@@ -1,6 +1,6 @@
 /*
  * Author Telnov Victor, v-telnov@yandex.ru
- * This code under licence CC BY-NC-ND
+ * This code under GNU GPL licence.
  */
 
 #ifndef MAINWINDOW_H
